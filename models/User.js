@@ -1,7 +1,7 @@
-const { Schema, default: mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const UserSchema = Schema(
+const UserSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -13,7 +13,7 @@ const UserSchema = Schema(
       unique: true,
       index: true,
       validate: {
-        validator: function (Str) {
+        validator: function (str) {
           return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(str);
         },
         message: (props) => `${props.value} is not a valid email`,
@@ -40,7 +40,7 @@ const UserSchema = Schema(
     },
     orders: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Order',
       },
     ],
@@ -50,10 +50,10 @@ const UserSchema = Schema(
 
 UserSchema.statics.findByCredentials = async function (email, password) {
   const user = await User.findOne({ email });
-  if (!user) throw new Error('invalid credentials');
+  if (!user) throw new Error('Email is incorrect');
   const isSamePassword = bcrypt.compareSync(password, user.password);
   if (isSamePassword) return user;
-  throw new Error('Invalid credentials');
+  throw new Error('Password is incorrect');
 };
 
 UserSchema.methods.toJSON = function () {
@@ -77,9 +77,9 @@ UserSchema.pre('save', function (next) {
   });
 });
 
-UserSchema.pre('remove', function(next){
-  this.model('Order').remove({owner:this._id}, next)
-})
+UserSchema.pre('remove', function (next) {
+  this.model('Order').remove({ owner: this._id }, next);
+});
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

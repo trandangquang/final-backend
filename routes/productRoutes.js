@@ -41,7 +41,6 @@ router.patch('/:id', async (req, res) => {
       pictures,
     });
     const products = await Product.find();
-    console.log('product-from patch', products);
     res.status(200).json(products);
   } catch (e) {
     res.status(400).send(e.message);

@@ -62,10 +62,10 @@ router.delete('/:id', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   try {
     const product = await Product.findById(id);
-    res.status(200).json({product});
+    res.status(200).json({ product });
   } catch (e) {
     res.status(400).send(e.message);
   }
@@ -159,7 +159,5 @@ router.post('/remove-from-cart', async (req, res) => {
     res.status(400).send(e.message);
   }
 });
-
-
 
 module.exports = router;

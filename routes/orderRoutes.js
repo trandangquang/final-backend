@@ -6,7 +6,6 @@ router.post('/', async (req, res) => {
   const { owner, cart, phone, address } = req.body;
   try {
     const user = await User.findById(owner);
-    console.log('user', user)
     const order = await Order.create({
       owner: user._id,
       products: cart,

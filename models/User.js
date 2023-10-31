@@ -21,7 +21,7 @@ const UserSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, 'is required'],
+      // required: [true, 'is required'],
     },
     isAdmin: {
       type: Boolean,
@@ -56,6 +56,11 @@ UserSchema.statics.findByCredentials = async function (email, password) {
   if (isSamePassword) return user;
   throw new Error('Password is incorrect');
 };
+
+// UserSchema.statics.findByCredentials = async function (email) {
+//   const user = await User.findOne({ email });
+//   if (!user) throw new Error('Email is incorrect');
+// };
 
 UserSchema.methods.toJSON = function () {
   const user = this;

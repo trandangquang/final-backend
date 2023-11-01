@@ -81,6 +81,17 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await User.findByIdAndDelete(id);
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (e) {
+    res.status(400).send(e.message);
+  }
+});
+
 router.get('/:id/orders', async (req, res) => {
   const { id } = req.params;
   try {

@@ -46,8 +46,8 @@ const UserSchema = mongoose.Schema(
     },
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
   },
-  { minimize: false }
-);
+  {timestamps: true}
+  );
 
 UserSchema.statics.findByCredentials = async function (email, password) {
   const user = await User.findOne({ email });

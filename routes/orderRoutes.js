@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Order = require('../models/Order');
 const User = require('../models/User');
+const moment = require('moment')
 
 router.post('/', async (req, res) => {
   const { owner, cart, phone, address } = req.body;
@@ -47,5 +48,90 @@ router.patch('/:id/mark-shipped', async(req, res)=> {
     res.status(400).json(e.message)
   }
 })
+
+router.get('/stats', async(req, res) => {
+  const previousMonth = moment().month(moment().month() - 1).set('date', 1).format('YYYY-MM-DD HH:mm:ss')
+  try {
+    const orders = await Order.aggregate([
+      {
+        $match: { createdAt: {$gte: new Date(previousMonth)}}
+      },
+      {
+        $project: {
+          month: { $month: '$createdAt'}
+        }
+      },
+      {
+        $group: {
+          _id: '$month',
+          total: {$sum: 1}
+        }
+      }
+    ])
+    res.status(200).json(orders)
+  } catch (e) {
+    console.log(e)
+    res.status(400).json(e)
+  }
+})
+
+router.get('/income/stats', async (req, res) => {
+  const previousMonth = moment()
+    .month(moment().month() - 1)
+    .set('date', 1)
+    .format('YYYY-MM-DD HH:mm:ss');
+  try {
+    const income = await Order.aggregate([
+      {
+        $match: { createdAt: { $gte: new Date(previousMonth) } },
+      },
+      {
+        $project: {
+          month: { $month: '$createdAt' },
+          sales: '$total'
+        },
+      },
+      {
+        $group: {
+          _id: '$month',
+          total: { $sum: '$sales' },
+        },
+      },
+    ]);
+    res.status(200).json(income);
+  } catch (e) {
+    console.log(e);
+    res.status(400).json(e);
+  }
+});
+
+router.get('/week-sales/stats', async (req, res) => {
+  const last7Days = moment()
+    .day(moment().day() - 7)
+    .format('YYYY-MM-DD HH:mm:ss');
+  try {
+    const income = await Order.aggregate([
+      {
+        $match: { createdAt: { $gte: new Date(last7Days) } },
+      },
+      {
+        $project: {
+          day: { $dayOfWeek: '$createdAt' },
+          sales: '$total',
+        },
+      },
+      {
+        $group: {
+          _id: '$day',
+          total: { $sum: '$sales' },
+        },
+      },
+    ]);
+    res.status(200).json(income);
+  } catch (e) {
+    console.log(e);
+    res.status(400).json(e);
+  }
+});
 
 module.exports = router;

@@ -7,6 +7,11 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const bodyParser = require('body-parser');
 require('./connection');
 const server = http.createServer(app);
+const {Server} = require('socket.io')
+const io = new Server(server, {
+  cors: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PATCH', 'DELETE']
+})
 
 const User = require('./models/User');
 const userRoutes = require('./routes/userRoutes');
@@ -42,3 +47,5 @@ app.post('/create-payment', async (req, res) => {
 server.listen(8080, () => {
   console.log('Server is running at port', 8080);
 });
+
+app.set('socketio', io);

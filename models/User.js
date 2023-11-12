@@ -40,7 +40,7 @@ const UserSchema = mongoose.Schema(
         count: 0,
       },
     },
-    notification: {
+    notifications: {
       type: Array,
       default: [],
     },

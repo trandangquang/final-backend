@@ -26,7 +26,6 @@ router.post('/', async (req, res) => {
       time: new Date(),
     };
     io.sockets.emit('new-order', notification);
-    console.log('notification', notification);
     user.markModified('orders');
     await user.save();
     res.status(200).json(user);
